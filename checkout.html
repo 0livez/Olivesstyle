@@ -1,113 +1,22 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
-
-       
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyAsdvP3gWwZmqvsS9t1_4Q9IHx5n-XqvKg",
-          authDomain: "olivesstore-de66a.firebaseapp.com",
-          projectId: "olivesstore-de66a",
-          storageBucket: "olivesstore-de66a.firebasestorage.app",
-          messagingSenderId: "345291995879",
-          appId: "1:345291995879:web:b172fe1a83c0ecacc2c042"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-
-        window.submitData = async () => {
-            const name = document.getElementById("name").value;
-            const address = document.getElementById("address").value;
-            const phone = document.getElementById("phone").value;
-            const email = document.getElementById("email").value;
-      
-            if (name && address && phone && email) {
-                try {
-                    await addDoc(collection(db, "orders"), { name, address, phone, email });
-                    alert("Data saved successfully!");
-                } catch (error) {
-                    console.error("Error adding document: ", error);
-                }
-            } else {
-                alert("Please fill out all fields.");
-            }
-        };
-      </script>
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Arabic+Kufi">
-    <style>
-        body {
-            font-family: 'Droid Arabic Kufi', sans-serif;
-            padding: 1rem;
-            background-color: #F4F4F4;
-        }
-        .checkout-container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        .order-summary {
-            margin-bottom: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        #place-order-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: #6B8E23;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #place-order-btn:hover {
-            background-color: #8FA163;
-        }
-    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
-
     <div class="checkout-container">
         <h2>Complete purchase</h2>
-
-        <!-- Order Summary Section -->
         <div class="order-summary">
             <h3>Order summary</h3>
             <div id="order-items"></div>
             <p id="total-price"></p>
         </div>
-
-        <!-- Shipping Form -->
         <div class="shipping-details">
             <h3>تفاصيل الشحن</h3>
             <div class="form-group">
@@ -124,21 +33,28 @@
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" optinal>
+                <input type="email" id="email">
             </div>
         </div>
-
-        <!-- Place Order Button -->
-        <button id="place-order-btn" onclick="submitData()">إتمام الطلب</button>
+        <button id="place-order-btn">إتمام الطلب</button>
     </div>
-
     <script>
-        // Retrieve cart data from localStorage
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsdvP3gWwZmqvsS9t1_4Q9IHx5n-XqvKg",
+            authDomain: "olivesstore-de66a.firebaseapp.com",
+            projectId: "olivesstore-de66a",
+            storageBucket: "olivesstore-de66a.firebasestorage.app",
+            messagingSenderId: "345291995879",
+            appId: "1:345291995879:web:b172fe1a83c0ecacc2c042"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
         const orderItemsContainer = document.getElementById('order-items');
         const totalPriceElement = document.getElementById('total-price');
 
-        // Display order summary
         function displayOrderSummary() {
             if (cartItems.length === 0) {
                 orderItemsContainer.innerHTML = '<p>سلة التسوق فارغة</p>';
@@ -153,11 +69,42 @@
                 orderItemsContainer.appendChild(itemElement);
                 total += item.price * item.quantity;
             });
-
             totalPriceElement.textContent = `المجموع الكلي: ${total.toFixed(2)} JOD`;
         }
 
-    </script>
+        document.getElementById('place-order-btn').addEventListener('click', async () => {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value || "";
 
+            if (!name || !address || !phone) {
+                alert('يرجى ملء جميع الحقول');
+                return;
+            }
+
+            const order = {
+                name,
+                address,
+                phone,
+                email,
+                items: cartItems,
+                total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('orders').add(order);
+                localStorage.removeItem('cartItems');
+                alert('تم إتمام الطلب بنجاح! سنقوم بالتواصل معك قريباً.');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('حدث خطأ أثناء إتمام الطلب. حاول مرة أخرى.');
+            }
+        });
+
+        displayOrderSummary();
+    </script>
 </body>
 </html>
