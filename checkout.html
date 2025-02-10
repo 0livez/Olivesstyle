@@ -1,15 +1,52 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+
+       
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAsdvP3gWwZmqvsS9t1_4Q9IHx5n-XqvKg",
+          authDomain: "olivesstore-de66a.firebaseapp.com",
+          projectId: "olivesstore-de66a",
+          storageBucket: "olivesstore-de66a.firebasestorage.app",
+          messagingSenderId: "345291995879",
+          appId: "1:345291995879:web:b172fe1a83c0ecacc2c042"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+        window.submitData = async () => {
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            const phone = document.getElementById("phone").value;
+            const email = document.getElementById("email").value;
+      
+            if (name && address && phone && email) {
+                try {
+                    await addDoc(collection(db, "orders"), { name, address, phone, email });
+                    alert("Data saved successfully!");
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                }
+            } else {
+                alert("Please fill out all fields.");
+            }
+        };
+      </script>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Arabic+Kufi">
-  
-    
-
-
     <style>
         body {
             font-family: 'Droid Arabic Kufi', sans-serif;
@@ -140,63 +177,6 @@
         // Initialize the order summary display
         displayOrderSummary();
     </script>
-    <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-firestore.js";
-    
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCpH9MT3jV6xnfgIUpyeM6lo92xErvLzgk",
-            authDomain: "olivesstore-5ae14.firebaseapp.com",
-            projectId: "olivesstore-5ae14",
-            storageBucket: "olivesstore-5ae14.firebasestorage.app",
-            messagingSenderId: "659451227141",
-            appId: "1:659451227141:web:0a815e0f21f3f2b3c4406c"
-          };
-          
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-    
-        // Debugging
-        console.log("🔥 Firebase Initialized:", app);
-        console.log("📦 Firestore Database:", db);
-    
-        // Place Order
-        document.getElementById('place-order-btn').addEventListener('click', async () => {
-            const name = document.getElementById('name').value;
-            const address = document.getElementById('address').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value || "Not provided";
-            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    
-            if (!name || !address || !phone) {
-                alert('يرجى ملء جميع الحقول');
-                return;
-            }
-    
-            try {
-                const docRef = await addDoc(collection(db, "orders"), {
-                    name,
-                    address,
-                    phone,
-                    email,
-                    items: cartItems,
-                    timestamp: new Date()
-                });
-    
-                console.log("✅ Order placed:", docRef.id);
-    
-                localStorage.removeItem('cartItems');
-                alert('تم إتمام الطلب بنجاح! سنقوم بالتواصل معك قريباً.');
-                window.location.href = 'index.html';
-    
-            } catch (error) {
-                console.error("❌ Firestore Error:", error);
-                alert("حدث خطأ أثناء تقديم الطلب، تحقق من الإعدادات.");
-            }
-        });
-    </script>
+
 </body>
 </html>
