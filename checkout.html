@@ -1,43 +1,77 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Arabic+Kufi">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #checkout-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 2rem auto;
+        }
+
+        #cart-summary, #customer-info {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item, .input-field {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 0.5rem 0;
+        }
+
+        #total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        #checkout-button {
+            background-color: #6B8E23;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        #checkout-button:hover {
+            background-color: #8FA163;
+        }
+    </style>
 </head>
 <body>
-    <div class="checkout-container">
-        <h2>Complete purchase</h2>
-        <div class="order-summary">
-            <h3>Order summary</h3>
-            <div id="order-items"></div>
-            <p id="total-price"></p>
+    <div id="checkout-container">
+        <h2>Checkout</h2>
+        <div id="cart-summary"></div>
+        <p id="total-price"></p>
+        
+        <div id="customer-info">
+            <h3>Customer Information</h3>
+            <input type="text" id="customer-name" placeholder="Full Name" class="input-field" required><br>
+            <input type="text" id="customer-address" placeholder="Address" class="input-field" required><br>
+            <input type="tel" id="customer-phone" placeholder="Phone Number" class="input-field" required><br>
+            <input type="email" id="customer-email" placeholder="Email" class="input-field" required><br>
         </div>
-        <div class="shipping-details">
-            <h3>تفاصيل الشحن</h3>
-            <div class="form-group">
-                <label for="name"> Full Name:</label>
-                <input type="text" id="name" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Address:</label>
-                <textarea id="address" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone number:</label>
-                <input type="tel" id="phone" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email">
-            </div>
-        </div>
-        <button id="place-order-btn">إتمام الطلب</button>
+        
+        <button id="checkout-button">Confirm Order</button>
     </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAsdvP3gWwZmqvsS9t1_4Q9IHx5n-XqvKg",
@@ -47,64 +81,52 @@
             messagingSenderId: "345291995879",
             appId: "1:345291995879:web:b172fe1a83c0ecacc2c042"
         };
-        
-        firebase.initializeApp(firebaseConfig);
+
+        const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const orderItemsContainer = document.getElementById('order-items');
+        const cartSummary = document.getElementById('cart-summary');
         const totalPriceElement = document.getElementById('total-price');
 
-        function displayOrderSummary() {
+        let totalPrice = 0;
+        cartSummary.innerHTML = cartItems.map(item => {
+            totalPrice += parseFloat(item.price.replace('$', ''));
+            return `<div class='cart-item'><span>${item.name}</span> <span>${item.price}</span></div>`;
+        }).join('');
+        totalPriceElement.innerText = `Total: $${totalPrice.toFixed(2)}`;
+
+        document.getElementById('checkout-button').addEventListener('click', async () => {
+            const name = document.getElementById('customer-name').value.trim();
+            const address = document.getElementById('customer-address').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+
+            if (!name || !address || !phone || !email) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
             if (cartItems.length === 0) {
-                orderItemsContainer.innerHTML = '<p>سلة التسوق فارغة</p>';
-                totalPriceElement.textContent = '';
+                alert('Your cart is empty!');
                 return;
             }
-
-            let total = 0;
-            cartItems.forEach(item => {
-                const itemElement = document.createElement('p');
-                itemElement.textContent = `${item.name} - ${item.price} JOD x ${item.quantity}`;
-                orderItemsContainer.appendChild(itemElement);
-                total += item.price * item.quantity;
-            });
-            totalPriceElement.textContent = `المجموع الكلي: ${total.toFixed(2)} JOD`;
-        }
-
-        document.getElementById('place-order-btn').addEventListener('click', async () => {
-            const name = document.getElementById('name').value;
-            const address = document.getElementById('address').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value || "";
-
-            if (!name || !address || !phone) {
-                alert('يرجى ملء جميع الحقول');
-                return;
-            }
-
-            const order = {
-                name,
-                address,
-                phone,
-                email,
-                items: cartItems,
-                total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
 
             try {
-                await db.collection('orders').add(order);
+                await db.collection('orders').add({
+                    customer: { name, address, phone, email },
+                    items: cartItems,
+                    total: totalPrice,
+                    timestamp: new Date()
+                });
+                alert('Order placed successfully!');
                 localStorage.removeItem('cartItems');
-                alert('تم إتمام الطلب بنجاح! سنقوم بالتواصل معك قريباً.');
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('Error placing order:', error);
-                alert('حدث خطأ أثناء إتمام الطلب. حاول مرة أخرى.');
+                alert('Failed to place order. Please try again.');
             }
         });
-
-        displayOrderSummary();
     </script>
 </body>
 </html>
