@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #checkout-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: 5rem auto;
+            text-align: left;
+        }
+
+        #cart-summary, #customer-info {
+            margin-bottom: 1rem;
+        }
+
+        .cart-item, .input-field {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 0.5rem 0;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        #checkout-button {
+            background-color: #6B8E23;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        #checkout-button:hover {
+            background-color: #8FA163;
+        }
+    </style>
+</head>
+<body>
+    <div id="checkout-container">
+        <h2>إتمام الشراء</h2>
+        <div id="cart-summary"></div>
+        <p id="total-price"></p>
+        
+        <div id="customer-info">
+            <h3>معلومات العميل</h3>
+            <input type="text" id="customer-name" placeholder="الاسم الكامل" class="input-field" required>
+            <input type="text" id="customer-address" placeholder="العنوان" class="input-field" required>
+            <input type="tel" id="customer-phone" placeholder="رقم الهاتف" class="input-field" required>
+            <input type="email" id="customer-email" placeholder="البريد الإلكتروني" class="input-field" required>
+        </div>
+        
+        <button id="checkout-button">تأكيد الطلب</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsdvP3gWwZmqvsS9t1_4Q9IHx5n-XqvKg",
+            authDomain: "olivesstore-de66a.firebaseapp.com",
+            projectId: "olivesstore-de66a",
+            storageBucket: "olivesstore-de66a.firebasestorage.app",
+            messagingSenderId: "345291995879",
+            appId: "1:345291995879:web:b172fe1a83c0ecacc2c042"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        const cartSummary = document.getElementById('cart-summary');
+        const totalPriceElement = document.getElementById('total-price');
+
+        let totalPrice = 0;
+        cartSummary.innerHTML = cartItems.map(item => {
+            totalPrice += parseFloat(item.price.replace('$', ''));
+            return `<div class='cart-item'><span>${item.name}</span> <span>${item.price}</span></div>`;
+        }).join('');
+        totalPriceElement.innerText = `الإجمالي: $${totalPrice.toFixed(2)}`;
+
+        document.getElementById('checkout-button').addEventListener('click', async () => {
+            const name = document.getElementById('customer-name').value.trim();
+            const address = document.getElementById('customer-address').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+
+            if (!name || !address || !phone || !email) {
+                alert('يرجى ملء جميع الحقول المطلوبة.');
+                return;
+            }
+
+            if (cartItems.length === 0) {
+                alert('عربة التسوق فارغة!');
+                return;
+            }
+
+            try {
+                await db.collection('orders').add({
+                    customer: { name, address, phone, email },
+                    items: cartItems,
+                    total: totalPrice,
+                    timestamp: new Date()
+                });
+                alert('تم تقديم الطلب بنجاح!');
+                localStorage.removeItem('cartItems');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('خطأ أثناء تقديم الطلب:', error);
+                alert('فشل تقديم الطلب. الرجاء المحاولة مرة أخرى.');
+            }
+        });
+    </script>
+</body>
+</html>
