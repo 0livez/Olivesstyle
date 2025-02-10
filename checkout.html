@@ -157,25 +157,6 @@
             totalPriceElement.textContent = `المجموع الكلي: ${total.toFixed(2)} JOD`;
         }
 
-        // Place order function
-        document.getElementById('place-order-btn').addEventListener('click', () => {
-            const name = document.getElementById('name').value;
-            const address = document.getElementById('address').value;
-            const phone = document.getElementById('phone').value;
-
-            if (!name || !address || !phone) {
-                alert('يرجى ملء جميع الحقول');
-                return;
-            }
-
-            // Clear the cart after placing the order
-            localStorage.removeItem('cartItems');
-            alert('تم إتمام الطلب بنجاح! سنقوم بالتواصل معك قريباً.');
-            window.location.href = 'index.html'; // Redirect to the main page
-        });
-
-        // Initialize the order summary display
-        displayOrderSummary();
     </script>
 
 </body>
