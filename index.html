@@ -392,6 +392,22 @@ html {
             });
         });
 
+        const buyNowButtons = document.querySelectorAll('.Buy-now');
+
+buyNowButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const productCard = button.closest('.product-card');
+        const productName = productCard.querySelector('.product-title').innerText;
+        const productPrice = productCard.querySelector('.product-price').innerText;
+
+        // Clear existing cart and add only this item
+        localStorage.setItem('cartItems', JSON.stringify([{ name: productName, price: productPrice }]));
+        
+        // Redirect to checkout immediately
+        window.location.href = 'cart.html';
+    });
+});
+
         // Group items for dropdown
         function aggregateItems(items) {
             const grouped = {};
