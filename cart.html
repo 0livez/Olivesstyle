@@ -8,202 +8,112 @@
         body {
             background-color: #f5f5f5;
             font-family: Arial, sans-serif;
+            text-align: center;
         }
 
-        header {
-            background-color: transparent;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
-        #home-button {
-            background-color: #fff;
-            color: #6B8E23;
-            border: 1px solid gray;
-            padding: 1.5rem 1rem;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        #home-button:hover {
-            background-color: #8FA163;
-        }
-
-        #cart-items {
-            margin: 2rem;
+        #cart-container {
+            background-color: white;
             padding: 2rem;
-            background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        #cart-items h2 {
-            margin-bottom: 1rem;
-        }
-
-        #cart-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            width: 80%;
+            margin: 2rem auto;
+            text-align: left;
         }
 
         .cart-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            background-color: #f9f9f9;
-            padding: 1rem;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
         }
 
-        .cart-item h3 {
-            margin: 0;
+        #total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
         }
 
-        .cart-item button {
-            background-color: red;
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        button {
+            background-color: #6B8E23;
             color: white;
             border: none;
-            padding: 0.5rem;
+            padding: 1rem 2rem;
             border-radius: 4px;
             cursor: pointer;
         }
 
-        .cart-item button:hover {
-            background-color: #8B0000;
+        button:hover {
+            background-color: #8FA163;
         }
-
-        #cart-empty {
-            display: none;
-            text-align: center;
-            font-size: 1.2rem;
-            color: olivedrab;
-        }
-
-        #cart-list.empty {
-            display: none;
-        }
-
-        #cart-empty.show {
-            display: block;
-        }
-        #checkout-button {
-    background-color: #6B8E23;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 1rem;
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-
-#checkout-button:hover {
-    background-color: #8FA163;
-}
-
     </style>
-        
 </head>
 <body>
-    <header>
-        <h1></h1>
-        <button id="home-button">Home</button>
-    </header>
-    
-    <section id="cart-items">
-        <h2>Your Cart</h2>
+    <div id="cart-container">
+        <h2>سلة المشتريات</h2>
         <div id="cart-list"></div>
-        <button id="checkout-button">Checkout</button>
-        <p id="cart-empty"; class="show">Your cart is empty</p>
-    </section>
+        <p id="total-price"></p>
+        
+        <div class="cart-buttons">
+            <button onclick="window.location.href='index.html'">متابعة التسوق</button>
+            <button onclick="clearCart()">إفراغ السلة</button>
+            <button onclick="proceedToCheckout()">إتمام الشراء</button>
+        </div>
+    </div>
 
     <script>
-        // Simulated cart data (this would be handled by server-side storage or local storage in a real-world scenario)
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
         const cartList = document.getElementById('cart-list');
-        const cartEmpty = document.getElementById('cart-empty');
+        const totalPriceElement = document.getElementById('total-price');
 
-        // Show items in the cart
         function updateCart() {
-            cartList.innerHTML = ''; // Clear the cart list
+            cartList.innerHTML = '';
+            let totalPrice = 0;
+            
             if (cartItems.length > 0) {
-                cartItems.forEach(item => {
+                cartItems.forEach((item, index) => {
+                    totalPrice += parseFloat(item.price.replace('$', ''));
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('cart-item');
                     itemDiv.innerHTML = `
-                        <h3>${item.name} - ${item.price}</h3>
-                        <button onclick="removeItem('${item.name}')">X</button>
+                        <span>${item.name} - ${item.price}</span>
+                        <button onclick="removeItem(${index})">إزالة</button>
                     `;
                     cartList.appendChild(itemDiv);
                 });
-                cartEmpty.classList.remove('show');
+                totalPriceElement.innerText = `الإجمالي: $${totalPrice.toFixed(2)}`;
             } else {
-                cartEmpty.classList.add('show');
+                cartList.innerHTML = '<p>السلة فارغة</p>';
+                totalPriceElement.innerText = '';
             }
         }
 
-        // Remove item from the cart
-        function removeItem(itemName) {
-            const index = cartItems.findIndex(item => item.name === itemName);
-            if (index !== -1) {
-                cartItems.splice(index, 1);
-                localStorage.setItem('cartItems', JSON.stringify(cartItems)); // Store the updated cart in localStorage
-                updateCart(); // Update the cart display
+        function removeItem(index) {
+            cartItems.splice(index, 1);
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            updateCart();
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cartItems');
+            updateCart();
+        }
+
+        function proceedToCheckout() {
+            if (cartItems.length === 0) {
+                alert('السلة فارغة!');
+            } else {
+                window.location.href = 'checkout.html';
             }
         }
 
-        // Redirect to the homepage
-        document.getElementById('home-button').addEventListener('click', () => {
-            window.location.href = 'index.html'; // Replace with the actual path to your main page
-        });
-
-        // Initial cart setup
         updateCart();
-        document.getElementById('checkout-button').addEventListener('click', () => {
-    if (cartItems.length > 0) {
-        window.location.href = 'checkout.html';
-    } else {
-        alert('Your cart is empty!');
-    }
-});
-
-
-
     </script>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyCt_GPlc4UynNGoQUEotLt53NgjMYhMU3E",
-          authDomain: "olivesstyle.firebaseapp.com",
-          projectId: "olivesstyle",
-          storageBucket: "olivesstyle.firebasestorage.app",
-          messagingSenderId: "202496277786",
-          appId: "1:202496277786:web:4cc29adae65afd30ff00a3",
-          measurementId: "G-EXKL0J07VN"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-      </script>
 </body>
 </html>

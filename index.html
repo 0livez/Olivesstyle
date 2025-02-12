@@ -387,7 +387,7 @@
     </footer>
     
     <script>
-        const cartIconLink = document.querySelector('.cart-container a'); // Target the <a> tag inside cart-container
+        const cartButton = document.querySelector('.cart-button');
         const cartDropdown = document.getElementById('cart-dropdown');
         const buyNowButtons = document.querySelectorAll('.Buy-now');
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
@@ -457,11 +457,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     
-       // Handle cart icon click (redirect to cart page)
-cartIconLink.addEventListener('click', (e) => {
-    e.preventDefault(); // Prevent default link behavior if needed
-    window.location.href = 'cart.html';
-});
+        // Handle cart icon click (redirect to cart page)
+        cartButton.addEventListener('click', () => {
+            window.location.href = 'cart.html';
+        });
     
         // Update cart dropdown when the user hovers over the cart icon
         const cartContainer = document.querySelector('.cart-container');
