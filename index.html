@@ -139,7 +139,7 @@ html {
 
 .add-to-cart:hover,
 .Buy-now:hover {
-    background-color: yellowgreen;
+    background-color: rgb(50, 205, 55);
 }
 
 .contact-section {
@@ -286,6 +286,26 @@ html {
     .coming-soon {
         font-size: 5rem;
     }
+}
+
+.cart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 1000;
+}
+
+.cart-notification.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>
 <body>
@@ -435,8 +455,41 @@ buyNowButtons.forEach(button => {
             }
         }
 
+        // Function to show the cart notification
+function showCartNotification() {
+    const notification = document.getElementById('cart-notification');
+    notification.classList.add('show');
+
+    // Hide the notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Add to cart logic
+addToCartButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const productCard = button.closest('.product-card');
+        const productName = productCard.querySelector('.product-title').innerText;
+        const productPrice = productCard.querySelector('.product-price').innerText;
+
+        cartItems.push({ name: productName, price: productPrice });
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+        cartIcon.classList.add('animate');
+        setTimeout(() => cartIcon.classList.remove('animate'), 300);
+        updateCartDropdown();
+
+        // Show the cart notification
+        showCartNotification();
+    });
+});
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', updateCartDropdown);
     </script>
+    <div id="cart-notification" class="cart-notification">
+        <span>تمت إضافة المنتج إلى السلة!</span>
+    </div>
 </body>
 </html>

@@ -49,8 +49,23 @@
             cursor: pointer;
         }
         .cart-buttons button:hover {
-            background-color: #8FA163;
+            background-color: rgb(50, 205, 55);
         }
+
+        .cart-buttons button {
+    background-color: #3CB371; 
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Add transform to transition */
+}
+
+.cart-buttons button:hover {
+    background-color: rgb(50, 205, 55);
+    transform: scale(1.1); /* Scale up by 10% on hover */
+}
     </style>
 </head>
 <body>
