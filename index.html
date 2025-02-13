@@ -307,6 +307,18 @@ html {
     opacity: 1;
     transform: translateY(0);
 }
+
+@keyframes cart-shake {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.2) rotate(-5deg); }
+    50% { transform: scale(1.2) rotate(5deg); }
+    75% { transform: scale(1.2) rotate(-5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.cart-icon.animate {
+    animation: cart-shake 0.6s ease-in-out;
+}
 </style>
 <body>
     <nav class="nav">
@@ -397,21 +409,7 @@ html {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
         // Add to cart logic
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const productCard = button.closest('.product-card');
-                const productName = productCard.querySelector('.product-title').innerText;
-                const productPrice = productCard.querySelector('.product-price').innerText;
-
-                cartItems.push({ name: productName, price: productPrice });
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-                cartIcon.classList.add('animate');
-                setTimeout(() => cartIcon.classList.remove('animate'), 300);
-                updateCartDropdown();
-            });
-        });
-
+        
         const buyNowButtons = document.querySelectorAll('.Buy-now');
 
 buyNowButtons.forEach(button => {
@@ -476,11 +474,13 @@ addToCartButtons.forEach(button => {
         cartItems.push({ name: productName, price: productPrice });
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
+        // Trigger animation
         cartIcon.classList.add('animate');
-        setTimeout(() => cartIcon.classList.remove('animate'), 300);
-        updateCartDropdown();
+        setTimeout(() => {
+            cartIcon.classList.remove('animate');
+        }, 600); // Match animation duration
 
-        // Show the cart notification
+        updateCartDropdown();
         showCartNotification();
     });
 });
