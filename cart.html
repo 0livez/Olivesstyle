@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
+    <title>Cart
+    </title>
     <style>
         body {
             background-color: #f5f5f5;
@@ -12,8 +13,9 @@
         }
         #cart-container {
             padding: 2rem;
+            border-color:#fa2828;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
             width: 45%;
             margin: 2rem auto;
             text-align: left;
@@ -55,7 +57,7 @@
         }
 
         .cart-buttons button {
-    background-color: #3CB371; 
+    background-color: #000000; 
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -65,7 +67,7 @@
 }
 
 .cart-buttons button:hover {
-    background-color: rgb(50, 205, 55);
+    background-color: rgb(0, 0, 0);
     transform: scale(1.1); /* Scale up by 10% on hover */
 }
 
@@ -92,13 +94,11 @@
 </head>
 <body>
     <div id="cart-container">
-        <h2>Cart</h2>
+        <h2>Cart Summary</h2>
         <div id="cart-list"></div>
         <p id="total-price"></p>
         <div class="cart-buttons">
-            <button onclick="window.location.href='index.html'">Continue shopping</button>
-            <button onclick="clearCart()">Empty cart</button>
-            <button onclick="proceedToCheckout()">Complete order</button>
+            <button onclick="proceedToCheckout()">Checkout</button>
         </div>
     </div>
 
@@ -141,11 +141,12 @@
             }
         }
 
-        function removeAll(name, price) {
-            cartItems = cartItems.filter(item => !(item.name === name && item.price === price));
-            localStorage.setItem('cartItems', JSON.stringify(cartItems));
-            updateCart();
-        }
+        function addOne(name, price) {
+    // Add a new instance of the item
+    cartItems.push({ name: name, price: price });
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    updateCart();
+}
 
         function clearCart() {
             localStorage.removeItem('cartItems');
@@ -187,8 +188,12 @@ function updateCart() {
             itemDiv.innerHTML = `
                 <span>${item.name} - ${item.price} × ${item.quantity}</span>
                 <div>
-                    <button style="color:red" onclick="removeOne('${item.name}', '${item.price}')"><i class="fa-solid fa-minus"></i></button>
-                    <button onclick="removeAll('${item.name}', '${item.price}')">🗑️</button>
+                    <button style="color:black" onclick="removeOne('${item.name}', '${item.price}')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button style="color:black" onclick="addOne('${item.name}', '${item.price}')">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
             `;
             cartList.appendChild(itemDiv);
