@@ -14,7 +14,7 @@
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 50%;
+            width: 45%;
             margin: 2rem auto;
             text-align: left;
         }
@@ -25,8 +25,10 @@
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
-            border-bottom: 1px solid #ddd;
-            font-size: 1.5rem;
+            background-color: #eee;
+            border: 1px solid black;
+            border-bottom: 2px solid #ddd;
+            font-size: 1.1rem;
         }
         #total-price {
             font-size: 1.2rem;
@@ -66,11 +68,31 @@
     background-color: rgb(50, 205, 55);
     transform: scale(1.1); /* Scale up by 10% on hover */
 }
+
+.cart-item button {
+    font-size: 16px; 
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    background-color: #eee;
+    transition: all 0.3s ease;
+}
+
+.cart-item button:hover {
+    background-color: none;
+    transform: scale(1.4);
+}
+
+.cart-item div {
+    display: flex;
+    gap: 0.5rem;
+}
     </style>
+    <script src="https://kit.fontawesome.com/d1fd6c7b6f.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="cart-container">
-        <h2>سلة المشتريات</h2>
+        <h2>Cart</h2>
         <div id="cart-list"></div>
         <p id="total-price"></p>
         <div class="cart-buttons">
@@ -140,6 +162,43 @@
         }
 
         updateCart();
+
+        function removeOne(name, price) {
+    // Find the first matching item and remove it
+    const index = cartItems.findIndex(item => item.name === name && item.price === price);
+    if (index > -1) {
+        cartItems.splice(index, 1);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        updateCart();
+    }
+}
+
+function updateCart() {
+    cartList.innerHTML = '';
+    let totalPrice = 0;
+    const aggregated = aggregateItems(cartItems);
+
+    if (aggregated.length > 0) {
+        aggregated.forEach(item => {
+            const itemTotal = parseFloat(item.price.replace('$', '')) * item.quantity;
+            totalPrice += itemTotal;
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('cart-item');
+            itemDiv.innerHTML = `
+                <span>${item.name} - ${item.price} × ${item.quantity}</span>
+                <div>
+                    <button style="color:red" onclick="removeOne('${item.name}', '${item.price}')"><i class="fa-solid fa-minus"></i></button>
+                    <button onclick="removeAll('${item.name}', '${item.price}')">🗑️</button>
+                </div>
+            `;
+            cartList.appendChild(itemDiv);
+        });
+        totalPriceElement.innerText = `Total: $${totalPrice.toFixed(2)}`;
+    } else {
+        cartList.innerHTML = '<p style="text-align: center;">Cart is empty</p>';
+        totalPriceElement.innerText = '';
+    }
+}
     </script>
 </body>
 </html>
