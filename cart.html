@@ -28,8 +28,7 @@
             justify-content: space-between;
             padding: 0.5rem 0;
             background-color: #eee;
-            border: 1px solid black;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 1.5px solid #ddd;
             font-size: 1.1rem;
         }
         #total-price {
@@ -106,54 +105,97 @@
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
         const cartList = document.getElementById('cart-list');
         const totalPriceElement = document.getElementById('total-price');
-
+    
         function aggregateItems(items) {
             const grouped = {};
-            items.forEach(item => {
+            const orderTracker = []; // Tracks order of first appearances
+    
+            items.forEach((item, index) => {
                 const key = `${item.name}-${item.price}`;
-                grouped[key] = grouped[key] || { ...item, quantity: 0 };
+                if (!grouped[key]) {
+                    grouped[key] = { ...item, quantity: 0, firstIndex: index };
+                    orderTracker.push(key);
+                }
                 grouped[key].quantity++;
             });
-            return Object.values(grouped);
+    
+            // Return items in original first-appearance order
+            return orderTracker.map(key => grouped[key]);
         }
-
+    
+        function calculateTotal() {
+            return cartItems.reduce((total, item) => {
+                return total + parseFloat(item.price.replace('$', ''));
+            }, 0);
+        }
+    
+        function animateTotalPrice(newTotal, oldTotal) {
+            const duration = 400; // Animation duration in milliseconds
+            const startTime = performance.now();
+    
+            function updatePrice(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const interpolatedTotal = oldTotal + (newTotal - oldTotal) * progress;
+    
+                totalPriceElement.innerText = `Total: $${interpolatedTotal.toFixed(2)}`;
+    
+                if (progress < 1) {
+                    requestAnimationFrame(updatePrice);
+                }
+            }
+    
+            requestAnimationFrame(updatePrice);
+        }
+    
         function updateCart() {
             cartList.innerHTML = '';
-            let totalPrice = 0;
+            const oldTotal = parseFloat(totalPriceElement.innerText.replace(/[^0-9.]/g, '')) || 0;
+            let newTotal = 0;
             const aggregated = aggregateItems(cartItems);
-
+    
             if (aggregated.length > 0) {
                 aggregated.forEach(item => {
                     const itemTotal = parseFloat(item.price.replace('$', '')) * item.quantity;
-                    totalPrice += itemTotal;
+                    newTotal += itemTotal;
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('cart-item');
                     itemDiv.innerHTML = `
                         <span>${item.name} - ${item.price} × ${item.quantity}</span>
-                        <button onclick="removeAll('${item.name}', '${item.price}')">❌</button>
+                        <div>
+                            <button style="color:black" onclick="removeOne('${item.name}', '${item.price}')">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <button style="color:black" onclick="addOne('${item.name}', '${item.price}')">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
                     `;
                     cartList.appendChild(itemDiv);
                 });
-                totalPriceElement.innerText = `الإجمالي: $${totalPrice.toFixed(2)}`;
             } else {
-                cartList.innerHTML = '<p style="text-align: center;">السلة فارغة</p>';
-                totalPriceElement.innerText = '';
+                cartList.innerHTML = '<p style="text-align: center;">Cart is empty</p>';
             }
+    
+            // Animate the total price change
+            animateTotalPrice(newTotal, oldTotal);
         }
-
+    
         function addOne(name, price) {
-    // Add a new instance of the item
-    cartItems.push({ name: name, price: price });
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    updateCart();
-}
-
-        function clearCart() {
-            localStorage.removeItem('cartItems');
-            cartItems = [];
+            cartItems.push({ name: name, price: price });
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
             updateCart();
         }
-
+    
+        function removeOne(name, price) {
+            const index = cartItems.findIndex(item => item.name === name && item.price === price);
+            if (index > -1) {
+                cartItems.splice(index, 1);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                updateCart();
+            }
+        }
+    
         function proceedToCheckout() {
             if (cartItems.length === 0) {
                 alert('السلة فارغة!');
@@ -161,49 +203,9 @@
                 window.location.href = 'checkout.html';
             }
         }
-
-        updateCart();
-
-        function removeOne(name, price) {
-    // Find the first matching item and remove it
-    const index = cartItems.findIndex(item => item.name === name && item.price === price);
-    if (index > -1) {
-        cartItems.splice(index, 1);
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        updateCart();
-    }
-}
-
-function updateCart() {
-    cartList.innerHTML = '';
-    let totalPrice = 0;
-    const aggregated = aggregateItems(cartItems);
-
-    if (aggregated.length > 0) {
-        aggregated.forEach(item => {
-            const itemTotal = parseFloat(item.price.replace('$', '')) * item.quantity;
-            totalPrice += itemTotal;
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('cart-item');
-            itemDiv.innerHTML = `
-                <span>${item.name} - ${item.price} × ${item.quantity}</span>
-                <div>
-                    <button style="color:black" onclick="removeOne('${item.name}', '${item.price}')">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <button style="color:black" onclick="addOne('${item.name}', '${item.price}')">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                </div>
-            `;
-            cartList.appendChild(itemDiv);
-        });
-        totalPriceElement.innerText = `Total: $${totalPrice.toFixed(2)}`;
-    } else {
-        cartList.innerHTML = '<p style="text-align: center;">Cart is empty</p>';
-        totalPriceElement.innerText = '';
-    }
-}
+    
+        document.addEventListener('DOMContentLoaded', updateCart);
     </script>
+    
 </body>
 </html>
