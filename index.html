@@ -375,12 +375,13 @@ html {
             <p>Contact Olives to discover our exclusive details about our fashion apparel collection.</p>
         </div>
         <div class="contact-form">
-            <form>
-                <input type="text" placeholder="Name" required>
-                <input type="email" placeholder="Email" required>
-                <textarea placeholder="Message" rows="3" required style="resize: none; height: 180px;"></textarea>
+            <form action="contact@olivesstyle.com" method="POST">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <textarea name="message" placeholder="Message" rows="3" required style="resize: none; height: 180px;"></textarea>
                 <button type="submit">Send Message</button>
             </form>
+            
         </div>
     </section>
 
