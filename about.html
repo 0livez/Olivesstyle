@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن أوليفز - About Olives</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Playfair Display', 'Tajawal', serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+            color: #000000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .lang-toggle {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lang-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'Playfair Display', 'Tajawal', serif;
+        }
+
+        h1 {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .section h2 {
+            color: #000000;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .ar-content { display: block; }
+        .en-content { display: none; }
+
+        .cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-button {
+            background: #000000;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-family: 'Playfair Display', 'Tajawal', serif;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        [lang="ar"] {
+            font-family: 'Tajawal', serif;
+        }
+
+        [lang="en"] {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lang-toggle">
+            <button class="lang-btn" onclick="toggleLanguage()"><span class="current-lang">العربية</span> <i class="fas fa-exchange-alt"></i></button>
+        </div>
+
+        <div class="ar-content" lang="ar">
+            <h1>عن أوليفز</h1>
+            <div class="section">
+                <p>Olives ليست مجرد علامة تجارية—إنها بيان. وُلدت من رؤية تجمع بين الصمود والحرية، لتكون رمزًا لمن يرفضون القيود. كل قطعة نصممها تحمل معنى أعمق، حيث نمزج بين الأناقة والقوة والرسالة.</p>
+            </div>
+
+            <div class="section">
+                <h2>رسالتنا</h2>
+                <p>نصنع أزياءً تعكس القوة والمقاومة والهوية. نهتم بأدق التفاصيل، من الخامات عالية الجودة إلى التصميمات التي تحمل معنى، لنقدم لك أكثر من مجرد ملابس—نقدم لك أسلوب حياة.</p>
+            </div>
+
+            <div class="section">
+                <h2>أكثر من مجرد موضة</h2>
+                <p>في Olives، نؤمن أن الملابس ليست مجرد قماش، بل صوت. صوت لمن يمشون في طريقهم الخاص، لمن يقفون بثبات أمام التحديات. عندما ترتدي Olives، فأنت لا ترتدي مجرد ملابس، بل ترتدي رمزًا للقوة والحرية والهوية.</p>
+            </div>
+
+            <div class="cta">
+                <button class="cta-button">اتصل بنا</button>
+            </div>
+        </div>
+
+        <div class="en-content" lang="en">
+            <h1>About Olives</h1>
+            <div class="section">
+                <p>Olives is not just a brand—it's a statement. Born from a vision of resilience and freedom, it stands as a symbol for those who refuse to be limited. Every piece we design carries a deeper meaning, blending style, strength, and purpose.</p>
+            </div>
+
+            <div class="section">
+                <h2>Our Mission</h2>
+                <p>We create fashion that reflects power, resistance, and identity. From high-quality fabrics to meaningful designs, we provide more than just clothing—we offer a way of life.</p>
+            </div>
+
+            <div class="section">
+                <h2>More Than Fashion</h2>
+                <p>At Olives, we believe that clothing is not just fabric—it's a voice. A voice for those who walk their own path and stand firm against challenges. When you wear Olives, you're not just wearing clothes—you're wearing a symbol of power, freedom, and identity.</p>
+            </div>
+
+            <div class="cta">
+                <button class="cta-button">Contact us</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'ar';
+        
+        function toggleLanguage() {
+            // Toggle language
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            
+            // Update button text
+            document.querySelector('.current-lang').textContent = currentLang === 'ar' ? 'العربية' : 'English';
+            
+            // Toggle content visibility
+            document.querySelectorAll('.ar-content, .en-content').forEach(content => {
+                content.style.display = content.classList.contains(currentLang + '-content') ? 'block' : 'none';
+            });
+
+            // Update page direction
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+        }
+    </script>
+</body>
+</html>
