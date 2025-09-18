@@ -85,15 +85,6 @@ html {
     padding: 4rem 2rem;
 }
 
-.product-grid {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: nowrap;
-}
-
 .product-card {
     background-color: #fff;
     padding: 1rem;
@@ -106,12 +97,6 @@ html {
 
 .product-card:hover {
     transform: scale(1.1);
-}
-
-.product-image {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
 }
 
 .product-title {
@@ -229,6 +214,46 @@ html {
     text-decoration: none;
 }
 
+.product-card { position: relative; }
+
+.product-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1 / 1; /* adjust if needed */
+  cursor: default;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 220ms ease, transform 220ms ease;
+  backface-visibility: hidden;
+}
+
+.product-img.back {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+
+.product-media:hover .product-img.back,
+.product-media:focus .product-img.back,
+.product-media:focus-within .product-img.back {
+  opacity: 1;
+  transform: none;
+}
+
+.product-media:hover .product-img.front,
+.product-media:focus .product-img.front,
+.product-media:focus-within .product-img.front {
+  opacity: 0;
+}
+
 @media (max-width: 900px) {
     .product-grid {
         flex-wrap: wrap;
@@ -275,13 +300,6 @@ html {
     animation: cart-grow 0.3s ease-in-out;
 }
 
-.coming-soon {
-    font-family: Oswald;
-    text-align: center;
-    font-size: 9em;
-    font-weight: bold;
-}
-
 @media (orientation: portrait) {
     .coming-soon {
         font-size: 5rem;
@@ -319,6 +337,63 @@ html {
 .cart-icon.animate {
     animation: cart-shake 0.6s ease-in-out;
 }
+
+
+/* Tab List Implementation*/
+.tablist[role="tablist"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  max-width: max-content;
+  margin-inline: auto;
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.tab:is(:hover, :focus-visible) {
+  color: #111;
+}
+
+.tab.is-active {
+  color: #111;
+  border-bottom-color: #111;
+}
+
+.tabpanel {
+  padding-top: 1rem;
+}
+
+.tabpanel[hidden] {
+  display: none;
+}
+
+/* Example grid; adjust to match site */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+
+  /* Center the whole grid block */
+  max-width: 1200px;   /* adjust to your container width */
+  margin-inline: auto;
+
+  /* Center items within tracks (useful when last row has few items) */
+  justify-items: center;
+}
+
 </style>
 <body>
     <nav class="nav">
@@ -348,27 +423,149 @@ html {
         </p>
     </header>
     
-    <div class="coming-soon" dir="ltr">Coming soon...</div>
+	<section dir="ltr" class="tabs" aria-label="Product categories">
+  <div class="tablist" role="tablist" aria-label="Clothing">
+    <button role="tab"
+            id="tab-men"
+            class="tab is-active"
+            aria-selected="true"
+            aria-controls="panel-men"
+            tabindex="0">
+      Men
+    </button>
+    <button role="tab"
+            id="tab-women"
+            class="tab"
+            aria-selected="false"
+            aria-controls="panel-women"
+            tabindex="-1">
+      Women
+    </button>
+  </div>
 
-    <!-- <section class="product-section">
-        <div class="product-grid" dir="ltr">
-            <div class="product-card">
-                <img src="Images/polo1.jpg" alt="Product 1" class="product-image">
+  <div id="panel-men"
+       role="tabpanel"
+       class="tabpanel is-active"
+       aria-labelledby="tab-men">
+    <!-- Men products grid -->
+    <div class="product-grid">
+      <!-- Repeat product-card items -->
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/product1-front.png" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/product1-back.png"  alt="Men Product 1 back" loading="lazy">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+      <article class="product-card" data-sku="m-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Men Product 1">
+          <img class="product-img front" src="/assets/images/products/product1-front.png" alt="Men Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/product1-back.png"  alt="Men Product 1 back" loading="lazy">
+        </div>
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+    </div>
+  </div>
+
+  <div id="panel-women"
+       role="tabpanel"
+       class="tabpanel"
+       aria-labelledby="tab-women"
+       hidden>
+    <!-- Women products grid -->
+    <div class="product-grid">
+      <article class="product-card" data-sku="w-001">
+        <div class="product-media" tabindex="0" aria-label="Preview Women Product 1">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Women Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Women Product 1 back" loading="lazy">
+        </div>
+
+         <h3 class="product-title">Product 1</h3>
+         <p class="product-price">$24.99</p>
+         <button class="add-to-cart">Add to Cart</button>
+         <button class="Buy-now">Buy Now</button>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+    <!-- 
+     <section class="product-grid" dir="ltr">
+    <article class="product-card">
+        <div class="product-media">
+          <img class="product-img front" src="/assets/images/products/product1-front.png" alt="Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/product1-back.png"  alt="Product 1 back" loading="lazy">
+        </div>
                 <h3 class="product-title">Product 1</h3>
                 <p class="product-price">$24.99</p>
                 <button class="add-to-cart">Add to Cart</button>
                 <button class="Buy-now">Buy Now</button>
-            </div>
-            <div class="product-card">
-                <img src="Images/polo1.jpg" alt="Product 2" class="product-image">
+    </article>
+
+    <article class="product-card">
+        <div class="product-media">
+          <img class="product-img front" src="/assets/images/products/test-front.jpg" alt="Product 1 front">
+          <img class="product-img back"  src="/assets/images/products/test-back.jpg"  alt="Product 1 back" loading="lazy">
+        </div>
                 <h3 class="product-title">Product 2</h3>
-                <p class="product-price">$24.99</p>
+                <p class="product-price">$44.99</p>
                 <button class="add-to-cart">Add to Cart</button>
                 <button class="Buy-now">Buy Now</button>
-            </div>
-        </div>
-    </section> -->
-
+    </article>
+     </section>
+     -->
+     
+     <!-- CONTACT SECTION -->
     <section dir="ltr" class="contact-section">
         <div class="contact-info">
             <h2>Connect With Our Team</h2>
@@ -488,6 +685,67 @@ addToCartButtons.forEach(button => {
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', updateCartDropdown);
+
+	// TAB LIST IMPLEMENTATION
+(() => {
+  const tablist = document.querySelector('.tablist[role="tablist"]');
+  if (!tablist) return;
+
+  const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+  const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+
+  function activateTab(index, { focus = true } = {}) {
+    tabs.forEach((tab, i) => {
+      const selected = i === index;
+      tab.classList.toggle('is-active', selected);
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+
+      const panel = panels[i];
+      if (!panel) return;
+      panel.classList.toggle('is-active', selected);
+      if (selected) {
+        panel.removeAttribute('hidden');
+      } else {
+        panel.setAttribute('hidden', '');
+      }
+    });
+    if (focus) tabs[index].focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activateTab(i));
+  });
+
+  tablist.addEventListener('keydown', (e) => {
+    const current = tabs.indexOf(document.activeElement);
+    if (current === -1) return;
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'Right':
+        e.preventDefault();
+        activateTab((current + 1) % tabs.length);
+        break;
+      case 'ArrowLeft':
+      case 'Left':
+        e.preventDefault();
+        activateTab((current - 1 + tabs.length) % tabs.length);
+        break;
+      case 'Home':
+        e.preventDefault();
+        activateTab(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        activateTab(tabs.length - 1);
+        break;
+    }
+  });
+
+  const initial = Math.max(0, tabs.findIndex(t => t.getAttribute('aria-selected') === 'true'));
+  activateTab(initial, { focus: false });
+})();
     </script>
     <div id="cart-notification" class="cart-notification">
         <span>Added to cart</span>
