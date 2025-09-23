@@ -6,10 +6,14 @@
     <title>عن أوليفز - About Olives</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+
+	@font-face {
+	    font-family: "Oswald";
+	    src: url(assets/fonts/Oswald-VariableFont_wght.woff);
+	}
 
         body {
-            font-family: 'Playfair Display', 'Tajawal', serif;
+            font-family: "Oswald";
             margin: 0;
             padding: 40px 20px;
             background-color: #f5f5f5;
@@ -38,7 +42,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
-            font-family: 'Playfair Display', 'Tajawal', serif;
+            font-family: "Oswald";
         }
 
         h1 {
@@ -67,33 +71,12 @@
         .ar-content { display: block; }
         .en-content { display: none; }
 
-        .cta {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .cta-button {
-            background: #000000;
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: transform 0.3s;
-            font-family: 'Playfair Display', 'Tajawal', serif;
-        }
-
-        .cta-button:hover {
-            transform: scale(1.05);
-        }
-
         [lang="ar"] {
-            font-family: 'Tajawal', serif;
+            font-family: "Oswald";
         }
 
         [lang="en"] {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Tajawal', serif;
         }
     </style>
 </head>
@@ -119,9 +102,6 @@
                 <p>في Olives، نؤمن أن الملابس ليست مجرد قماش، بل صوت. صوت لمن يمشون في طريقهم الخاص، لمن يقفون بثبات أمام التحديات. عندما ترتدي Olives، فأنت لا ترتدي مجرد ملابس، بل ترتدي رمزًا للقوة والحرية والهوية.</p>
             </div>
 
-            <div class="cta">
-                <button class="cta-button">اتصل بنا</button>
-            </div>
         </div>
 
         <div class="en-content" lang="en">
@@ -138,10 +118,6 @@
             <div class="section">
                 <h2>More Than Fashion</h2>
                 <p>At Olives, we believe that clothing is not just fabric—it's a voice. A voice for those who walk their own path and stand firm against challenges. When you wear Olives, you're not just wearing clothes—you're wearing a symbol of power, freedom, and identity.</p>
-            </div>
-
-            <div class="cta">
-                <button class="cta-button">Contact us</button>
             </div>
         </div>
     </div>
