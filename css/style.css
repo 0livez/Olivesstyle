@@ -3,6 +3,7 @@
     src: url(assets/fonts/Oswald-VariableFont_wght.woff);
 }
 
+
 * {
     margin: 0;
     padding: 0;
@@ -14,8 +15,14 @@ html {
     background-size: cover;
     background-repeat: repeat;
     background-attachment: fixed;
+    height: 100%;
 }
 
+body {
+	display: flex;
+	flex-direction: column;	
+	min-height: 100%;
+}
 .text { text-align: center; }
 
 .nav {
@@ -44,11 +51,13 @@ html {
 
 
 .exclusive-btn {
-	font-family: "Oswald";
+	font-family: Arial;
 	font-size: 18px;
-	padding: 5px;
-	color: gold;
-	outline: 1px solid gold;
+	font-weight: bold;
+	padding: 5px 15px;
+	color: #f7de1e;
+	outline: 2px solid #111;
+	border-radius: 10px;
 	text-decoration: none;
 }
 
@@ -145,9 +154,9 @@ html {
 }
 
 .exclusive-btn:hover {
-    color: #fff;
-    background-color: #E0BD00;
-    transition: background-color 0.3s;
+    color: #E0BD00;
+    transition: color 0.3s;
+    text-decoration:underline;
 }
 
 .contact-section {
@@ -194,6 +203,7 @@ html {
 }
 
 .footer {
+    margin-top: auto;
     background-color: transparent;
     color: white;
     padding: 2rem;
