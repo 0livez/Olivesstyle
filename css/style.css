@@ -8,7 +8,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
 html {
@@ -148,7 +147,7 @@ body {
 }
 
 .add-to-cart:hover,
-.Buy-now:hover
+.Buy-now:hover, .contact-form button:hover
  {
     background-color: #3c3c3c;
 }
@@ -159,48 +158,32 @@ body {
     text-decoration:underline;
 }
 
-.contact-section {
+.form-container {
     display: flex;
-    flex-direction: column;
-    border-top: 1px solid #111;
-    align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
-    max-width: 580px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
-}
-
-.contact-section h2 {
-    text-align: center;
-}
-
-.contact-info {
-    flex: 1;
+    font-family: "Oswald";
+    font-size: 24px;
 }
 
 .contact-form {
-    flex: 1;
-}
-
-.contact-form input,
-.contact-form textarea {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
 }
 
 .contact-form button {
-    background-color: #111;
+    background-color: #111; 
     color: white;
-    padding: 0.5rem 1rem;
     border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem;
+
 }
+.contact-form input {padding-block: 5px;}
+.contact-form hr {margin-block: 10px;}
 
 .footer {
     margin-top: auto;
